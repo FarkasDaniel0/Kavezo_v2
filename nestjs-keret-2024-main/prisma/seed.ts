@@ -1,16 +1,27 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+
 const prisma = new PrismaClient();
 
 async function main() {
-  const concerts = Array.from({ length: 5 }, () => ({
-    performer: faker.music.bandName(),
-    startTime: faker.date.future(),
-    duration: faker.number.int({ min: 60, max: 180 }), // percben tárolva
-    cancelled: false,
-  }));
-
-  await prisma.concert.createMany({ data: concerts });
+  for (let i = 0; i < 15; i++) {
+    await prisma.concert.create({
+      data: {
+        performer: faker.person.fullName(),
+        startTime: faker.date.future(),
+        duration: faker.number.int({ min: 60, max: 180 }),
+        cancelled: Math.random() < 0.2, // 20% esély hogy elmarad
+      },
+    });
+  }
 }
 
-main().catch(e => console.error(e)).finally(() => prisma.$disconnect());
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
