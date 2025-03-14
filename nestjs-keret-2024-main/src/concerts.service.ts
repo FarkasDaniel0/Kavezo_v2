@@ -1,5 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
+import { CreateConcertDto } from '../dto/create-concert.dto';
+import { UpdateConcertDto } from '../dto/update-concert.dto';
 
 @Injectable()
 export class ConcertsService {
@@ -9,11 +11,41 @@ export class ConcertsService {
     return this.prisma.concert.findMany();
   }
 
-  async create(data) {
-    return this.prisma.concert.create({ data });
+  async create(data: CreateConcertDto) {
+    if (!data.performer || !data.startTime || !data.duration) {
+      throw new BadRequestException('Minden mező kitöltése kötelező!');
+    }
+    if (new Date(data.startTime) < new Date()) {
+      throw new BadRequestException('A kezdési idő nem lehet a múltban!');
+    }
+    if (data.duration <= 0) {
+      throw new BadRequestException('Az időtartamnak legalább 1 percnek kell lennie!');
+    }
+    return this.prisma.concert.create({
+      data: {
+        performer: data.performer,
+        startTime: new Date(data.startTime),
+        duration: data.duration,
+        cancelled: false,
+      },
+    });
   }
 
-  async update(id: number, data) {
-    return this.prisma.concert.update({ where: { id }, data });
+  async update(id: number, data: UpdateConcertDto) {
+    if (data.startTime && new Date(data.startTime) < new Date()) {
+      throw new BadRequestException('A kezdési idő nem lehet a múltban!');
+    }
+    if (data.duration !== undefined && data.duration <= 0) {
+      throw new BadRequestException('Az időtartamnak legalább 1 percnek kell lennie!');
+    }
+    return this.prisma.concert.update({
+      where: { id },
+      data: {
+        ...(data.performer !== undefined && { performer: data.performer }),
+        ...(data.startTime !== undefined && { startTime: new Date(data.startTime) }),
+        ...(data.duration !== undefined && { duration: data.duration }),
+        ...(data.cancelled !== undefined && { cancelled: data.cancelled }),
+      },
+    });
   }
 }

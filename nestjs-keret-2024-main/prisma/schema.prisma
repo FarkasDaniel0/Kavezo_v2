@@ -8,7 +8,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
   provider = "mysql"
   url      = "mysql://root:@localhost:3306/koncertek"
@@ -18,7 +17,6 @@ model Concert {
   id        Int      @id @default(autoincrement())
   performer String
   startTime DateTime
-  duration  Int     // percben tárolva
-  cancelled Boolean @default(false)
+  duration  Int
+  cancelled Boolean  @default(false)
 }
-

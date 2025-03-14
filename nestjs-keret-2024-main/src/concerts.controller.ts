@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConcertsService } from './concerts.service';
+import { CreateConcertDto } from '../dto/create-concert.dto';
 
 @Controller('concerts')
 export class ConcertsController {
@@ -11,7 +12,8 @@ export class ConcertsController {
   }
 
   @Post()
-  async create(@Body() data) {
+  @UsePipes(new ValidationPipe())
+  async create(@Body() data: CreateConcertDto) {
     return this.concertsService.create(data);
   }
 

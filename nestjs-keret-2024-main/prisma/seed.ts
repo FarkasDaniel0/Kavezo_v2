@@ -10,7 +10,7 @@ async function main() {
         performer: faker.person.fullName(),
         startTime: faker.date.future(),
         duration: faker.number.int({ min: 60, max: 180 }),
-        cancelled: Math.random() < 0.2, // 20% esély hogy elmarad
+        cancelled: Math.random() < 0.2,
       },
     });
   }
