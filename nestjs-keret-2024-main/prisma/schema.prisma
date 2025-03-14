@@ -1,22 +1,23 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Ez a Prisma séma fájl határozza meg az adatbázis struktúráját
 
 generator client {
+  // A Prisma kliens generátor beállítása
   provider = "prisma-client-js"
 }
 
 datasource db {
+  // Adatbázis kapcsolat beállításai
+  // MySQL adatbázist használunk
   provider = "mysql"
+  // Kapcsolódási URL: localhost-on fut, root felhasználóval, jelszó nélkül
   url      = "mysql://root:@localhost:3306/koncertek"
 }
 
 model Concert {
-  id        Int      @id @default(autoincrement())
-  performer String
-  startTime DateTime
-  duration  Int
-  cancelled Boolean  @default(false)
+  // Koncert modell definíciója
+  id        Int      @id @default(autoincrement()) // Egyedi azonosító, automatikusan növekszik
+  performer String // Előadó neve
+  startTime DateTime // Koncert kezdési időpontja
+  duration  Int // Koncert időtartama (percben)
+  cancelled Boolean  @default(false) // Koncert státusza (lemondva vagy sem)
 }

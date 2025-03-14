@@ -27,6 +27,8 @@ function Home() {
     axios.get(`${API_BASE_URL}/concerts`).then((res) => setConcerts(res.data));
   }, []);
 
+  // Koncert lemondása/törlése
+  // Az adott ID-val rendelkező koncertet megjelöli töröltként
   const markAsCanceled = (id: number) => {
     axios.patch(`${API_BASE_URL}/concerts/${id}`, { cancelled: true }).then(() => {
       setConcerts((prev) =>
@@ -35,13 +37,18 @@ function Home() {
     });
   };
 
+  // Form mezők változásainak kezelése
+  // A form state-et frissíti minden billentyűleütésnél
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Új koncert hozzáadása
+  // Form beküldésekor lefutó függvény, amely elküldi az adatokat a szervernek
   const handleAddSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Adatok formázása a szerver által várt formátumra
     const formattedData = {
       performer: form.performer,
       startTime: new Date(form.startTime).toISOString(),
